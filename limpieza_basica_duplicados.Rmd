@@ -1,0 +1,35 @@
+```{r}
+# Importación de librerías
+library(tidyverse)
+library(openxlsx)
+library(janitor)
+```
+
+# lectura de datos
+
+```{r}
+# Lectura de datos
+df <- read.xlsx("bd_pruebas.xlsx") %>% 
+  mutate(cedula = as.character(cedula))
+  
+df
+```
+
+# DEPURAMOS DUPLICADOS
+
+
+```{r}
+df %>% 
+  get_dupes(cedula)
+```
+
+
+```{r}
+df %>% 
+  group_by(cedula) %>% 
+  fill(everything(), .direction = "updown") %>% 
+  fill(everything(), .direction = "downup") %>% 
+  distinct(cedula, .keep_all = TRUE)
+```
+
+
