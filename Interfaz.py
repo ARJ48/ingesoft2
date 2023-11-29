@@ -11,16 +11,6 @@ import re
 from script_limpieza import limpiar_datos
 
 
-selected_cedula = ""
-selected_primer_nombre = ""
-selected_segundo_nombre = ""
-selected_primer_apellido = ""
-selected_segundo_apellido = ""
-selected_direccion = ""
-selected_telefono = ""
-selected_correo = ""
-
-
 # Descarga el csv procesado
 def descargar_csv(df):
     df.to_csv('db_organizada.csv', index=False)
@@ -28,14 +18,12 @@ def descargar_csv(df):
 
 ## Haciendo ventana depuracion csv
 
-def ventana_csv(df):
+def ventana_csv(df, selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo):
 
-    global selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo
-
-    ventana = Toplevel(Miventana)
-    ventana.title("Limpieza datos")
-    ventana.geometry("500x500")
-    title = tk.Label(ventana, text="LIMPIANDO DATOS, ESPERE...", font=("Tahoma", 15, "bold"))
+    # Limpiar la ventana principal (Miventana)
+    for widget in Miventana.winfo_children():
+        widget.destroy()
+    title = tk.Label(Miventana, text="LIMPIANDO DATOS, ESPERE...", font=("Tahoma", 15, "bold"))
     title.pack(ipady=25)
 
     rename_dict = {}
@@ -64,18 +52,18 @@ def ventana_csv(df):
 
     new_df = limpiar_datos(df)
 
-    boton_descargar = Button(ventana, text="Descargar datos procesados", command=lambda: descargar_csv(new_df))
+    boton_descargar = Button(Miventana, text="Descargar datos procesados", command=lambda: descargar_csv(new_df))
     boton_descargar.pack()
 
 
 # Se depuran los datos
-def ventana_datos(df):
-    global selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo
+def ventana_datos(df, selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo):
 
-    ventana = Toplevel(Miventana)
-    ventana.title("Limpieza datos")
-    ventana.geometry("500x500")
-    title = tk.Label(ventana, text="LIMPIANDO DATOS, ESPERE...", font=("Tahoma", 15, "bold"))
+    # Limpiar la ventana principal (Miventana)
+    for widget in Miventana.winfo_children():
+        widget.destroy()
+
+    title = tk.Label(Miventana, text="LIMPIANDO DATOS, ESPERE...", font=("Tahoma", 15, "bold"))
     title.pack(ipady=25)
 
     rename_dict = {}
@@ -104,7 +92,7 @@ def ventana_datos(df):
 
     new_df = limpiar_datos(df)
 
-    boton_descargar = Button(ventana, text="Depurar datos", command=lambda: descargar_csv(new_df))
+    boton_descargar = Button(Miventana, text="Depurar datos", command=lambda: descargar_csv(new_df))
     boton_descargar.pack()
 
 
@@ -156,10 +144,6 @@ def nombres_cols(usuario, contrasena, host, db_name, tabla):
 
     # Función para obtener las opciones seleccionadas
     def obtener_opciones(df):
-        # Usar la palabra clave global para acceder a variables globales
-        global selected_cedula, selected_primer_nombre, selected_segundo_nombre
-        global selected_primer_apellido, selected_segundo_apellido, selected_direccion
-        global selected_telefono, selected_correo
 
         # Asignar los valores seleccionados a las variables correspondientes
         selected_cedula = opciones["Cedula:"].get()
@@ -172,9 +156,10 @@ def nombres_cols(usuario, contrasena, host, db_name, tabla):
         selected_correo = opciones["Correo:"].get()
 
         # Realizar otras operaciones según sea necesario
+        ventana_datos(df, selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo)    
 
     # Botón para obtener las opciones seleccionadas
-    boton_obtener = Button(Miventana, text="Depurar datos", command=lambda: ventana_datos(df))
+    boton_obtener = Button(Miventana, text="Depurar datos", command=lambda: obtener_opciones(df))
     boton_obtener.pack()
 
 
@@ -268,11 +253,6 @@ def mostrar_columnas(archivo_csv):
 
         # Función para obtener las opciones seleccionadas
         def obtener_opciones(df):
-            # Usar la palabra clave global para acceder a variables globales
-            global selected_cedula, selected_primer_nombre, selected_segundo_nombre
-            global selected_primer_apellido, selected_segundo_apellido, selected_direccion
-            global selected_telefono, selected_correo
-
             # Asignar los valores seleccionados a las variables correspondientes
             selected_cedula = opciones["Cedula:"].get()
             selected_primer_nombre = opciones["Primer nombre:"].get()
@@ -284,9 +264,10 @@ def mostrar_columnas(archivo_csv):
             selected_correo = opciones["Correo:"].get()
 
             # Realizar otras operaciones según sea necesario
+            ventana_csv(df, selected_cedula, selected_primer_nombre, selected_segundo_nombre, selected_primer_apellido, selected_segundo_apellido, selected_direccion, selected_telefono, selected_correo)
 
         # Botón para obtener las opciones seleccionadas
-        boton_obtener = Button(Miventana, text="Depurar datos", command=lambda: ventana_csv(df))
+        boton_obtener = Button(Miventana, text="Depurar datos", command=lambda: obtener_opciones(df))
         boton_obtener.pack()
 
     except pd.errors.EmptyDataError:
