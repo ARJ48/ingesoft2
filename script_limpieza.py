@@ -7,17 +7,14 @@ import re
 
 def limpiar_datos(df):
 
-    # # Lectura de datos
-    # Leemos el archivo con la base de datos a probar
-
-    # Lectura de datos
-    df = pd.read_csv("bd_pruebas.csv", delimiter=";")
-
     # Convertimos el campo cedula y telefono como tipo string
-    df['cedula'] = df['cedula'].astype('str')
+    try:
+        df['cedula'] = df['cedula'].astype('str')
 
-    df['telefono'] = df["telefono"].apply(lambda x: f'{x:.0f}').astype('str')
-    df['telefono'] = df['telefono'].replace({'nan': np.nan})
+        df['telefono'] = df["telefono"].apply(lambda x: f'{x:.0f}').astype('str')
+        df['telefono'] = df['telefono'].replace({'nan': np.nan})
+    except:
+        pass
 
 
 
@@ -50,8 +47,10 @@ def limpiar_datos(df):
     # # Borrar duplicados
     # Unificamos los campos que sean de la misma persona y borramos duplicados
 
-
-    df = df.groupby('cedula').apply(lambda group: group.ffill().bfill()).drop_duplicates('cedula').reset_index(drop=True)
+    try:
+        df = df.groupby('cedula').apply(lambda group: group.ffill().bfill()).drop_duplicates('cedula').reset_index(drop=True)
+    except:
+        pass
 
     # # Validamos los tipos de cada dato
     # Validamos que por ejemplo columna cédula o teléfono no tengan caracteres, o que las columnas de nombres y apellidos tengan números
@@ -69,14 +68,37 @@ def limpiar_datos(df):
     filtrar_letras = lambda x: ''.join(filter(str.isalpha, x))
 
     # Eliminamos caracteres de la cedula y el telefono
+    # try:
     df['cedula'] = df['cedula'].map(filtrar_numeros)
-    df['telefono'] = df['telefono'].map(filtrar_numeros)
+    # except:
+    #     pass
+
+    try:
+        df['telefono'] = df['telefono'].map(filtrar_numeros)
+    except:
+        pass
 
     # Eliminamos números de los nombres y apellidos
-    df['primer_nombre'] = df['primer_nombre'].map(filtrar_letras)
-    df['segundo_nombre'] = df['segundo_nombre'].map(filtrar_letras)
-    df['primer_apellido'] = df['primer_apellido'].map(filtrar_letras)
-    df['segundo_apellido'] = df['segundo_apellido'].map(filtrar_letras)
+    try:
+        df['primer_nombre'] = df['primer_nombre'].map(filtrar_letras)
+    except:
+        pass
+
+    try:
+        df['segundo_nombre'] = df['segundo_nombre'].map(filtrar_letras)
+    except:
+        pass
+
+    try:
+        df['primer_apellido'] = df['primer_apellido'].map(filtrar_letras)
+    except:
+        pass
+
+    try:
+        df['segundo_apellido'] = df['segundo_apellido'].map(filtrar_letras)
+    except:
+        pass
+
 
     df = df.replace({'': np.nan})
 
@@ -100,8 +122,10 @@ def limpiar_datos(df):
 
         return address
 
-
-    df['direccion'] = df['direccion'].map(estandar_direccion)
+    try:
+        df['direccion'] = df['direccion'].map(estandar_direccion)
+    except:
+        pass
 
     # # Validación de correo electrónico
     # Se valida a través de una expresión regular el correo electrónico, de no cumplir las normas se elimina ese valor
@@ -114,7 +138,9 @@ def limpiar_datos(df):
         else:
             return np.nan
 
-
-    df['correo'] = df['correo'].map(validar_correo)
+    try:
+        df['correo'] = df['correo'].map(validar_correo)
+    except:
+        pass
 
     return df
