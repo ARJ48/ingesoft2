@@ -51,7 +51,7 @@ def mostrar_columnas(archivo_csv):
     try:
         # Leer las columnas del archivo CSV utilizando pandas
         df = pd.read_csv(archivo_csv)
-        columnas = str(df.columns.tolist()).split(";")
+        columnas = df.columns.tolist()
 
         # Crear una nueva ventana para mostrar etiquetas y selectores
         ventana_selectores = Toplevel(Miventana)
